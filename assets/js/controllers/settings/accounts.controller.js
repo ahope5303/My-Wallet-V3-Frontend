@@ -2,9 +2,10 @@ angular
   .module('walletApp')
   .controller('SettingsAccountsController', SettingsAccountsController);
 
-function SettingsAccountsController ($scope, Wallet, Alerts, $uibModal, filterFilter, $ocLazyLoad) {
+function SettingsAccountsController ($scope, Wallet, Alerts, $uibModal, filterFilter, $ocLazyLoad, modals) {
   $scope.accounts = Wallet.accounts;
   $scope.activeSpendableAddresses = () => Wallet.legacyAddresses().filter(a => a.active && !a.isWatchOnly && a.balance > 0);
+  $scope.openTransferAll = () => modals.openTransfer($scope.activeSpendableAddresses());
 
   $scope.display = {
     archived: false
@@ -70,13 +71,6 @@ function SettingsAccountsController ($scope, Wallet, Alerts, $uibModal, filterFi
       }
     });
   };
-
-  $scope.openTransferAll = () => $uibModal.open({
-    templateUrl: 'partials/settings/transfer.jade',
-    controller: 'TransferController',
-    windowClass: 'bc-modal',
-    resolve: { address: () => $scope.activeSpendableAddresses() }
-  });
 
   $scope.archive = (account) => Wallet.archive(account);
   $scope.unarchive = (account) => Wallet.unarchive(account);
